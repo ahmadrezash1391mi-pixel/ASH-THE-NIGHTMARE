@@ -1,4 +1,340 @@
-<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#08090d"><title>ASH: THE NIGHTMARE</title><style>
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050609;color:#f2f3f7;font-family:Vazirmatn,system-ui,sans-serif;touch-action:none}#game{position:fixed;inset:0}canvas{display:block}#shade{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse,transparent 25%,#0009 100%);z-index:2}#hud{position:fixed;inset:0;z-index:4;display:none;pointer-events:none}.top{display:flex;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 10px) 12px 0;gap:8px}.pill{background:#080b12c9;border:1px solid #ffffff24;border-radius:12px;padding:8px 10px;font-size:12px}.brand{font-weight:900;direction:ltr}.brand span,h1 em{color:#e34250}.small{font-size:11px;color:#c4cada;line-height:1.8}#cross{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#bdfaff;text-shadow:0 0 7px #78dce8}#hint,#toast{position:absolute;left:50%;transform:translateX(-50%);background:#080b12df;border:1px solid #ffffff25;border-radius:10px;padding:8px 12px;font-size:12px;white-space:nowrap;opacity:0}#hint{top:58%}#toast{bottom:22%;z-index:9}#controls{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 12px);left:0;right:0;display:flex;justify-content:space-between;align-items:flex-end;padding:0 12px;pointer-events:auto}.pad{display:grid;grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px 44px;gap:4px}.btn{color:#fff;background:#10141dbb;border:1px solid #ffffff38;border-radius:12px;font:700 14px Vazirmatn;touch-action:none}.pad .up{grid-column:2}.pad .left{grid-column:1;grid-row:2}.pad .down{grid-column:2;grid-row:2}.pad .right{grid-column:3;grid-row:2}.actions{display:flex;flex-direction:column;gap:7px}.actions .btn{width:72px;height:44px;font-size:11px}.actions .use{color:#8de6ed;border-color:#8de6ed88}#menu,#puzzle,#end,#rotate{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(ellipse at top,#27111a88,#030408 70%)}.card{width:min(100%,520px);max-height:94dvh;overflow:auto;padding:23px;border:1px solid #ffffff25;border-radius:22px;background:linear-gradient(145deg,#151822f5,#070910f7);box-shadow:0 25px 80px #000}.kicker{font-size:11px;color:#e34250;letter-spacing:2px;font-weight:900}h1{font-size:clamp(32px,8vw,54px);line-height:1.05;direction:ltr;margin:9px 0 12px}.desc{font-size:13px;color:#b6bdcb;line-height:1.9}.features{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:16px 0}.feat{border:1px solid #ffffff1d;border-radius:11px;padding:9px;font-size:11px;color:#c7cedb}.feat b{display:block;color:#fff;font-size:12px;margin-bottom:3px}label{display:block;font-size:12px;margin:10px 0 5px;color:#cbd1de}select,input{width:100%;padding:11px;background:#0b0e16;color:#fff;border:1px solid #343948;border-radius:10px;font:inherit}.row{display:flex;gap:9px}.row>div{flex:1}.primary,.secondary{border-radius:11px;padding:12px;font:700 14px Vazirmatn}.primary{width:100%;margin-top:13px;background:#e34250;color:white;border:0}.secondary{background:#151a26;color:white;border:1px solid #343948}.tiny{font-size:10px;color:#8992a4;line-height:1.8;margin-top:12px}#puzzle,#end,#rotate{display:none}.pbox{width:min(100%,400px);padding:22px;background:#0c1019;border:1px solid #ffffff30;border-radius:18px}.pbox p{font-size:13px;line-height:1.8;color:#b8bfce}#answer{text-align:center;direction:ltr;font-size:18px}#rotate{z-index:20;flex-direction:column;text-align:center}.phone{font-size:58px}@media(orientation:portrait) and (max-width:900px){body.playing #rotate{display:flex}body.playing #hud{display:none!important}}@media(orientation:landscape){.pad{transform:scale(.85);transform-origin:bottom left}}
-</style></head><body><div id="game"></div><div id="shade"></div><div id="hud"><div class="top"><div class="pill"><div class="brand">ASH <span>///</span> THE NIGHTMARE</div><div id="stageLabel" class="small">CHAPTER 01</div></div><div id="status" class="pill small">SANITY ▰▰▰▰▰<br>FIND THE KEY</div></div><div id="cross">＋</div><div id="hint"></div><div id="controls"><div class="pad"><button class="btn up" data-m="f">▲</button><button class="btn left" data-m="l">◀</button><button class="btn down" data-m="b">▼</button><button class="btn right" data-m="r">▶</button></div><div class="actions"><button class="btn" id="look">LOOK ↻</button><button class="btn use" id="use">USE / E</button><button class="btn" id="run">RUN</button></div></div></div><div id="menu"><div class="card"><div class="kicker">A SURVIVAL HORROR EXPERIENCE</div><h1>ASH: THE<br><em>NIGHTMARE</em></h1><div class="desc">راهروها تغییر می‌کنند. صداها تو را لو می‌دهند. چیزی در تاریکی دنبال تو می‌گردد. هر بار، راه تازه‌ای برای زنده‌ماندن پیدا کن.</div><div class="features"><div class="feat"><b>◈ سه‌بعدی اول‌شخص</b>موتور Three.js</div><div class="feat"><b>◈ دشمن شنوا</b>گشت‌زنی و تعقیب اولیه</div><div class="feat"><b>◈ معما و کلید</b>رمز و پیدا کردن خروجی</div><div class="feat"><b>◈ مراحل بی‌پایان</b>چیدمان تصادفی</div></div><div class="row"><div><label>درجه سختی</label><select id="difficulty"><option value="normal">Normal · عادی</option><option value="hard">Hard · سخت</option><option value="veryhard">Very Hard · بسیار سخت</option></select></div><div><label>حالت بازی</label><select id="mode"><option value="story">Story · داستانی</option><option value="endless">Endless · بی‌نهایت</option></select></div></div><button class="primary" id="start">ورود به کابوس</button><div class="tiny">نسخهٔ اولیهٔ قابل‌بازی؛ گوشی را افقی بگیر. رایانه: WASD/جهت‌ها، ماوس برای نگاه، E برای تعامل، Shift برای دویدن. اینترنت برای بارگیری موتور سه‌بعدی لازم است.</div></div></div><div id="puzzle"><div class="pbox"><div class="kicker">LOCKED DOOR // PUZZLE</div><h2>قفل رمزدار</h2><p id="prompt">حاصل 7 + 5 را وارد کن.</p><input id="answer" inputmode="numeric" maxlength="8" placeholder="ENTER CODE"><div class="row" style="margin-top:10px"><button class="secondary" id="cancel">بازگشت</button><button class="primary" id="submit" style="margin:0">تلاش</button></div><p id="note">به اطراف نگاه کن؛ شاید سرنخی جا مانده باشد.</p></div></div><div id="end"><div class="card"><div class="kicker">CHAPTER CLEARED</div><h1>YOU <em>SURVIVED.</em></h1><div class="desc" id="endText">در خروج باز شد؛ اما این مکان پایان ندارد.</div><button class="primary" id="next">ورود به مرحلهٔ بعد</button><button class="secondary" id="home" style="width:100%;margin-top:8px">منوی اصلی</button></div></div><div id="rotate"><div class="phone">▯</div><h2>گوشی را افقی بچرخان</h2><div class="desc">این کابوس برای صفحهٔ عریض طراحی شده است.</div></div><div id="toast"></div><script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script><script>
-(()=>{'use strict';const $=id=>document.getElementById(id);let scene,camera,renderer,clock,player,enemy,exit,keyObj,puzzleDoor,walls=[],things=[],interactables=[],stage=1,mode='story',difficulty='normal',sanity=100,yaw=0,pitch=0,paused=false,running=false,gotKey=false,doorSolved=false,code=12,seed=1,held={},mobile={},noiseAt=0,enemyState='patrol',target=null,raf=0,drag=false,lx=0,ly=0;const mats={wall:null,floor:null,red:null,cyan:null};function rnd(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}function say(t){$('toast').textContent=t;$('toast').style.opacity=1;setTimeout(()=>$('toast').style.opacity=0,1800)}function message(t){$('hint').textContent=t;$('hint').style.opacity=1;setTimeout(()=>$('hint').style.opacity=0,1800)}function add(g,m,x,y,z){let o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;scene.add(o);things.push(o);return o}function wall(x,z,sx,sz){let o=add(new THREE.BoxGeometry(sx,3,sz),mats.wall,x,1.5,z);walls.push(o);return o}function init(){if(!window.THREE){say('موتور سه‌بعدی بارگذاری نشد؛ اینترنت را بررسی کن.');return false}scene=new THREE.Scene();scene.background=new THREE.Color(0x03050a);scene.fog=new THREE.FogExp2(0x05070c,.045);camera=new THREE.PerspectiveCamera(76,innerWidth/innerHeight,.08,90);renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.outputColorSpace=THREE.SRGBColorSpace;$('game').innerHTML='';$('game').appendChild(renderer.domElement);scene.add(new THREE.HemisphereLight(0x9aaac4,0x111018,.45));let l=new THREE.PointLight(0xffd8ad,22,13,2);l.position.set(0,2.5,0);scene.add(l);mats.wall=new THREE.MeshStandardMaterial({color:0x343641,roughness:.95});mats.floor=new THREE.MeshStandardMaterial({color:0x171923,roughness:1});mats.red=new THREE.MeshStandardMaterial({color:0x771c2a,emissive:0x27030a});mats.cyan=new THREE.MeshStandardMaterial({color:0x8de6ed,emissive:0x1b6870});player=new THREE.Object3D();scene.add(player);player.add(camera);clock=new THREE.Clock();addEventListener('resize',resize);return true}function resize(){if(camera&&renderer){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}}function clear(){for(const o of things){scene.remove(o);o.geometry?.dispose()}things=[];walls=[];interactables=[];enemy=null}function build(){clear();seed=stage*937+0xa55e;gotKey=false;doorSolved=false;sanity=100;enemyState='patrol';let n=Math.min(13,7+(mode==='endless'?Math.floor(stage/3):Math.floor((stage-1)/55))),c=3,span=n*c;add(new THREE.BoxGeometry(span,.25,span),mats.floor,0,-.13,0);add(new THREE.BoxGeometry(span,.18,span),new THREE.MeshStandardMaterial({color:0x11131b}),0,3.05,0);for(let i=0;i<n;i++){let p=-span/2+c/2+i*c;wall(p,-span/2,c,.22);wall(p,span/2,c,.22);wall(-span/2,p,.22,c);wall(span/2,p,.22,c)}for(let z=1;z<n-1;z++)for(let x=1;x<n-1;x++)if(rnd()<.25){let wx=-span/2+x*c,wz=-span/2+z*c;if(rnd()<.5)wall(wx,wz,.22,c*.8);else wall(wx,wz,c*.8,.22)}for(let i=0;i<Math.min(8,3+Math.floor(stage/2));i++){let x=(rnd()-.5)*span*.7,z=(rnd()-.5)*span*.7;let lamp=new THREE.PointLight(i%3===0?0x9f2638:0x8aa4c9,i%3===0?2.8:1.2,6,2);lamp.position.set(x,2.5,z);scene.add(lamp);things.push(lamp);add(new THREE.BoxGeometry(.22,.12,.22),i%3===0?mats.red:mats.cyan,x,2.92,z)}player.position.set(-span/2+c,1.65,-span/2+c);yaw=0;pitch=0;player.rotation.y=0;exit=add(new THREE.BoxGeometry(1.1,2.8,.22),mats.red,span/2-c,1.4,span/2-c);exit.userData.type='exit';keyObj=add(new THREE.OctahedronGeometry(.28),mats.cyan,(rnd()-.5)*span*.4,.9,(rnd()-.5)*span*.4);keyObj.userData.type='key';interactables.push(keyObj);puzzleDoor=add(new THREE.BoxGeometry(.32,2.7,1.3),mats.red,(rnd()-.5)*span*.5,1.35,(rnd()-.5)*span*.5);puzzleDoor.userData.type='door';interactables.push(puzzleDoor);code=7+Math.floor(rnd()*8)+stage%7;enemy=new THREE.Group();let dark=new THREE.MeshStandardMaterial({color:0x08080d}),eye=new THREE.MeshStandardMaterial({color:0xf04152,emissive:0x8b0010});let body=new THREE.Mesh(new THREE.CapsuleGeometry(.36,.95,4,8),dark);body.position.y=1.05;enemy.add(body);let head=new THREE.Mesh(new THREE.SphereGeometry(.28,10,8),dark);head.position.y=1.8;enemy.add(head);for(let s of [-1,1]){let e=new THREE.Mesh(new THREE.SphereGeometry(.055,8,6),eye);e.position.set(s*.11,1.83,-.22);enemy.add(e)}enemy.position.set((rnd()-.5)*span*.5,0,(rnd()-.5)*span*.5);scene.add(enemy);things.push(enemy);$('stageLabel').textContent=`CHAPTER ${String(stage).padStart(2,'0')} · ${mode==='endless'?'ENDLESS NIGHT':'THE ENTRY'}`;status()}function status(){$('status').innerHTML=`SANITY ${'▰'.repeat(Math.ceil(sanity/20))}${'▱'.repeat(5-Math.ceil(sanity/20))}<br>${gotKey?'REACH THE EXIT':'FIND THE KEY'}`}function blocked(x,z){let r=.32;for(const w of walls){let p=w.position,g=w.geometry.parameters;if(Math.abs(x-p.x)<g.width/2+r&&Math.abs(z-p.z)<g.depth/2+r)return true}return false}function move(dx,dz){let nx=player.position.x+dx,nz=player.position.z+dz;if(!blocked(nx,player.position.z))player.position.x=nx;if(!blocked(player.position.x,nz))player.position.z=nz}function nearest(){let best=null,d0=2.2;for(let o of interactables){if(!o.parent)continue;let d=Math.hypot(player.position.x-o.position.x,player.position.z-o.position.z);if(d<d0){d0=d;best=o}}if(Math.hypot(player.position.x-exit.position.x,player.position.z-exit.position.z)<2.2&&gotKey)return {userData:{type:'exit'},position:exit.position,label:'در خروج — استفاده'};if(best)best.label=best.userData.type==='key'?'کلید نورانی — بردار':doorSolved?'در بازشده':'قفل رمزدار — حل معما';return best}function update(dt){let f=(held.KeyW||held.ArrowUp||mobile.f?1:0)-(held.KeyS||held.ArrowDown||mobile.b?1:0),s=(held.KeyD||mobile.r?1:0)-(held.KeyA||mobile.l?1:0),len=Math.hypot(f,s)||1;f/=len;s/=len;let sp=(difficulty==='normal'?3.1:difficulty==='hard'?3.5:3.8)*(held.ShiftLeft||mobile.run?1.6:1);if(f||s){move((-Math.sin(yaw)*f+Math.cos(yaw)*s)*sp*dt,(-Math.cos(yaw)*f-Math.sin(yaw)*s)*sp*dt);if(sp>4.5&&performance.now()-noiseAt>1100){noiseAt=performance.now();enemyState='investigate';target=player.position.clone()}}if(enemy){let dx=player.position.x-enemy.position.x,dz=player.position.z-enemy.position.z,d=Math.hypot(dx,dz);if(d<(difficulty==='normal'?2.2:3.2))enemyState='chase';if(enemyState==='chase'||enemyState==='investigate'){let tx=enemyState==='chase'?player.position.x:(target||player.position).x,tz=enemyState==='chase'?player.position.z:(target||player.position).z,ex=tx-enemy.position.x,ez=tz-enemy.position.z,ed=Math.hypot(ex,ez)||1,es=(difficulty==='normal'?1.3:difficulty==='hard'?1.8:2.2)*dt,nx=enemy.position.x+ex/ed*es,nz=enemy.position.z+ez/ed*es;if(!blocked(nx,enemy.position.z))enemy.position.x=nx;if(!blocked(enemy.position.x,nz))enemy.position.z=nz;if(enemyState==='investigate'&&ed<.7){enemyState='patrol';target=null}}else{enemy.position.x+=Math.sin(performance.now()*.0007)*.006;enemy.position.z+=Math.cos(performance.now()*.0006)*.006}enemy.lookAt(player.position.x,1,player.position.z);if(d<1.3){sanity-=dt*(difficulty==='normal'?8:difficulty==='hard'?13:18);if(Math.random()<.012)message('پشت سرت است. فرار کن!')}else sanity=Math.min(100,sanity+dt*.5);if(sanity<=0){sanity=65;player.position.set(-3,1.65,-3);enemy.position.set(3,0,3);say('کابوس ادامه دارد؛ مراقب صداها باش.')}}status();let o=nearest();$('hint').textContent=o?o.label:'';$('hint').style.opacity=o?1:0;if(gotKey&&Math.hypot(player.position.x-exit.position.x,player.position.z-exit.position.z)<1.5)say('در خروج را با دکمهٔ USE باز کن.')}function interact(){if(!running||paused)return;let o=nearest();if(!o){say('چیزی برای تعامل نزدیکت نیست.');return}if(o.userData.type==='key'){scene.remove(o);interactables=interactables.filter(a=>a!==o);gotKey=true;status();say('کلید را برداشتی؛ خروجی را پیدا کن.')}else if(o.userData.type==='door'){if(doorSolved)return say('قفل قبلاً باز شده.');$('prompt').textContent=`معما: حاصل ${code-3} + 3 چند می‌شود؟`; $('answer').value='';$('puzzle').style.display='flex';paused=true}else if(o.userData.type==='exit'){finish()}}function submit(){if(Number($('answer').value)===code){doorSolved=true;scene.remove(puzzleDoor);interactables=interactables.filter(o=>o!==puzzleDoor);$('puzzle').style.display='none';paused=false;say('قفل باز شد!')}else{$('note').textContent='رمز اشتباه است؛ دوباره حساب کن.';sanity=Math.max(0,sanity-5)}}function finish(){running=false;paused=true;$('endText').textContent=`مرحلهٔ ${stage} را پشت سر گذاشتی. فصل بعدی تاریک‌تر است؛ این فقط آغاز کابوس است.`;$('end').style.display='flex'}function next(){stage++;$('end').style.display='none';paused=false;running=true;build()}function home(){$('end').style.display='none';$('puzzle').style.display='none';$('menu').style.display='flex';$('hud').style.display='none';document.body.classList.remove('playing');running=false;paused=false}function animate(){raf=requestAnimationFrame(animate);if(!renderer)return;let dt=Math.min(clock.getDelta(),.05);if(running&&!paused)update(dt);renderer.render(scene,camera)}function start(){mode=$('mode').value;difficulty=$('difficulty').value;if(!renderer&&!init())return;build();$('menu').style.display='none';$('hud').style.display='block';document.body.classList.add('playing');running=true;paused=false;clock.start();if(!raf)animate();say('برای تعامل نزدیک شیء، USE را بزن.')}$('start').onclick=start;$('use').onclick=interact;$('submit').onclick=submit;$('cancel').onclick=()=>{$('puzzle').style.display='none';paused=false};$('next').onclick=next;$('home').onclick=home;$('look').onclick=()=>{yaw+=Math.PI/4;player.rotation.y=yaw};$('run').addEventListener('touchstart',e=>{e.preventDefault();mobile.run=true},{passive:false});['touchend','touchcancel','mouseup'].forEach(ev=>$('run').addEventListener(ev,()=>mobile.run=false));document.querySelectorAll('[data-m]').forEach(b=>{let k=b.dataset.m,down=e=>{e.preventDefault();mobile[k]=true},up=()=>mobile[k]=false;b.addEventListener('touchstart',down,{passive:false});b.addEventListener('touchend',up);b.addEventListener('touchcancel',up);b.addEventListener('mousedown',down);b.addEventListener('mouseup',up);b.addEventListener('mouseleave',up)});addEventListener('keydown',e=>{held[e.code]=true;if(e.code==='KeyE'||e.code==='Space')interact();if(e.code==='Escape'&&running)paused=!paused});addEventListener('keyup',e=>held[e.code]=false);$('game').addEventListener('click',()=>{if(running&&innerWidth>innerHeight&&renderer?.domElement.requestPointerLock)renderer.domElement.requestPointerLock()});document.addEventListener('mousemove',e=>{if(document.pointerLockElement===renderer?.domElement&&running&&!paused){yaw-=e.movementX*.002;pitch=Math.max(-1.1,Math.min(1.1,pitch-e.movementY*.002));camera.rotation.set(pitch,0,0);player.rotation.y=yaw}});$('game').addEventListener('touchstart',e=>{if(!running||paused||e.touches.length!==1)return;drag=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY},{passive:true});$('game').addEventListener('touchmove',e=>{if(!drag||!running||paused||e.touches.length!==1)return;let t=e.touches[0];yaw-=(t.clientX-lx)*.006;pitch=Math.max(-.9,Math.min(.9,pitch-(t.clientY-ly)*.004));camera.rotation.set(pitch,0,0);player.rotation.y=yaw;lx=t.clientX;ly=t.clientY},{passive:true});$('game').addEventListener('touchend',()=>drag=false)})();</script></body></html>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#07080b">
+<title>ASH: THE NIGHTMARE</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050609;color:#fff;font-family:Vazirmatn,sans-serif;touch-action:none}
+#game{position:fixed;inset:0;width:100%;height:100%}
+.screen{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse,#15151b 0%,#050609 75%);padding:20px;overflow:auto}
+.card{width:min(500px,100%);padding:28px;border:1px solid #ffffff26;border-radius:17px;background:#0b0d12ee;box-shadow:0 20px 80px #000}
+.brand{font-size:clamp(30px,8vw,47px);font-weight:900;text-align:center;direction:ltr;line-height:1.2}
+.red{color:#c62d3e}
+.sub{text-align:center;color:#9296a3;letter-spacing:2px;font-size:11px;margin:8px 0 25px;direction:ltr}
+h2{font-size:19px}p{font-size:13px;color:#b8bac3;line-height:2}
+button{font:600 14px Vazirmatn;cursor:pointer;color:white;background:#171a21;border:1px solid #ffffff25;border-radius:9px;padding:12px}
+button.primary{background:#a71e30;border-color:#e34b5b}
+button:active{transform:scale(.98)}
+.full{width:100%;margin-top:9px}
+.row{display:flex;gap:8px;margin:14px 0}
+.row button{flex:1;font-size:12px;padding:10px 3px}
+.row .active{background:#50131d;border-color:#d93448}
+#hud{position:fixed;inset:0;z-index:3;pointer-events:none;display:none}
+.top{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;gap:8px}
+.box{background:#080a0dd9;border:1px solid #ffffff25;border-radius:8px;padding:8px 11px;font-size:12px}
+#objective{position:absolute;right:12px;top:70px;padding:8px 12px;background:#07080bdc;border-right:3px solid #c52b3a;font-size:12px}
+#cross{position:absolute;left:50%;top:50%;width:8px;height:8px;border:1px solid white;border-radius:50%;transform:translate(-50%,-50%)}
+#msg{position:absolute;bottom:24%;left:50%;transform:translateX(-50%);background:#07080beF;border:1px solid #ffffff30;border-radius:8px;padding:10px 15px;font-size:13px;white-space:nowrap;display:none}
+#mobile{display:none;position:fixed;inset:0;z-index:4;pointer-events:none}
+#joy{position:absolute;left:20px;bottom:25px;width:120px;height:120px;border-radius:50%;background:#11151b99;border:1px solid #ffffff55;pointer-events:auto}
+#knob{position:absolute;left:37px;top:37px;width:44px;height:44px;border-radius:50%;background:#ffffff35;border:1px solid #ffffff70}
+.act{position:absolute;right:20px;bottom:30px;width:65px;height:65px;border-radius:50%;pointer-events:auto;font-size:12px;background:#171a20dd}
+#use{bottom:105px}
+#hint{position:absolute;bottom:8px;right:12px;font-size:10px;color:#ddd9}
+#rotate{display:none;position:fixed;inset:0;z-index:10;background:#050609;align-items:center;justify-content:center;text-align:center;padding:25px}
+#end{display:none}
+@media(orientation:portrait) and (max-width:800px){#rotate{display:flex}}
+@media(max-width:800px){#mobile{display:block}}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="rotate">
+ <div><div style="font-size:45px">📱 ↻</div><h2>گوشی را افقی کن</h2><p>برای تجربهٔ بهتر بازی، صفحه را بچرخان.</p></div>
+</div>
+
+<div id="menu" class="screen">
+ <div class="card">
+  <div class="brand">ᗩSH<span class="red">:</span> THE<br>NIGHTMARE</div>
+  <div class="sub">EVERY SOUND HAS A CONSEQUENCE</div>
+  <hr style="border:0;border-top:1px solid #ffffff20">
+  <h2>به کابوس خوش آمدی</h2>
+  <p>در هزارتوی تاریک گیر افتاده‌ای. کلید طلایی را پیدا کن، در خروجی را باز کن و از موجودی که در راهروها پرسه می‌زند فرار کن.</p>
+  <p>درجهٔ سختی:</p>
+  <div class="row">
+   <button class="active" data-d="0">عادی</button>
+   <button data-d="1">سخت</button>
+   <button data-d="2">بسیار سخت</button>
+  </div>
+  <button id="start" class="full primary">شروع کابوس</button>
+  <button id="help" class="full">راهنمای کنترل‌ها</button>
+  <p style="text-align:center;font-size:11px">نسخهٔ آزمایشی 0.1</p>
+ </div>
+</div>
+
+<div id="hud">
+ <div class="top">
+  <div class="box"><b>ᗩSH: THE NIGHTMARE</b><br><span id="stage">مرحله ۱</span></div>
+  <div class="box"><b id="keyText">کلید: پیدا نشده</b><br><span id="hardText">سختی: عادی</span></div>
+ </div>
+ <div id="objective">هدف: کلید را پیدا کن.</div>
+ <div id="cross"></div><div id="msg"></div>
+</div>
+
+<div id="mobile">
+ <div id="joy"><div id="knob"></div></div>
+ <button class="act" id="use">تعامل<br>E</button>
+ <button class="act" id="flash">نور<br>F</button>
+ <button class="act" id="run" style="right:94px;bottom:32px;width:55px;height:55px">دویدن</button>
+ <div id="hint">سمت راست صفحه را بکش تا نگاه کنی</div>
+</div>
+
+<div id="end" class="screen">
+ <div class="card">
+  <div class="brand" id="endBrand">ᗩSH<span class="red">:</span></div>
+  <h2 id="endTitle">پایان</h2><p id="endText"></p>
+  <button id="next" class="full primary">مرحلهٔ بعد</button>
+  <button id="back" class="full">بازگشت به منو</button>
+ </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const canvas=$('game');
+let scene,camera,renderer,clock,player,flashlight,monster,key,exitDoor;
+let walls=[],maze=[],size=11,cell=4,level=1,diff=0,hasKey=false,running=false,dead=false;
+let yaw=0,pitch=0,mx=0,my=0,sprint=false,flashOn=true,monsterAlert=0;
+let touchLook=null,joyId=null,keys={},lastMsg=0,seed=1;
+const names=['عادی','سخت','بسیار سخت'];
+const rng=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+const pos=(x,z)=>({x:(x-(size-1)/2)*cell,z:(z-(size-1)/2)*cell});
+const mat=(color,extra={})=>new THREE.MeshStandardMaterial({color,roughness:.85,...extra});
+function box(parent,x,y,z,w,h,d,material){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+ m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
+}
+function init(){
+ renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+ renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));
+ renderer.setSize(innerWidth,innerHeight);
+ renderer.outputColorSpace=THREE.SRGBColorSpace;
+ scene=new THREE.Scene();scene.background=new THREE.Color(0x050609);
+ scene.fog=new THREE.FogExp2(0x07080d,.027);
+ camera=new THREE.PerspectiveCamera(76,innerWidth/innerHeight,.1,150);
+ camera.rotation.order='YXZ';
+ player=new THREE.Object3D();player.add(camera);scene.add(player);
+ scene.add(new THREE.HemisphereLight(0x70798b,0x171016,.45));
+ const glow=new THREE.PointLight(0x8c1b2b,1.4,22);glow.position.set(0,3,0);scene.add(glow);
+ const floor=new THREE.Mesh(new THREE.PlaneGeometry(200,200),mat(0x101116));
+ floor.rotation.x=-Math.PI/2;floor.position.y=-.08;scene.add(floor);
+ flashlight=new THREE.SpotLight(0xdce4ff,3.5,25,Math.PI/7,.6,1.4);
+ camera.add(flashlight);flashlight.position.set(0,0,0);
+ flashlight.target.position.set(0,0,-1);camera.add(flashlight.target);
+ clock=new THREE.Clock();makeLevel();animate();
+}
+function makeLevel(){
+ // Remove objects from the previous level, keeping the lights and player.
+ for(const o of [...scene.children]){
+  if(o===player||o===scene.children[1]||o===flashlight)continue;
+  if(o===camera||o===flashlight.target)continue;
+  if(o.isLight&&o.type==='HemisphereLight')continue;
+  if(o.isMesh&&o.geometry.type==='PlaneGeometry')continue;
+  scene.remove(o);
+ }
+ walls=[];maze=[];hasKey=false;dead=false;
+ size=Math.min(11+2*Math.floor((level-1)/3),19);
+ if(size%2===0)size++;
+ seed=level*7919+diff*103;
+ maze=Array.from({length:size},()=>Array(size).fill(1));
+ let stack=[[1,1]];maze[1][1]=0;
+ while(stack.length){
+  const [x,z]=stack[stack.length-1],opts=[];
+  for(const [dx,dz] of [[2,0],[-2,0],[0,2],[0,-2]]){
+   let nx=x+dx,nz=z+dz;
+   if(nx>0&&nz>0&&nx<size-1&&nz<size-1&&maze[nz][nx]===1)opts.push([nx,nz,dx,dz]);
+  }
+  if(!opts.length){stack.pop();continue}
+  const [nx,nz,dx,dz]=opts[Math.floor(rng()*opts.length)];
+  maze[z+dz/2][x+dx/2]=0;maze[nz][nx]=0;stack.push([nx,nz]);
+ }
+ // Open a few extra passages.
+ for(let i=0;i<Math.min(level+2,12);i++){
+  const x=1+Math.floor(rng()*(size-2)),z=1+Math.floor(rng()*(size-2));
+  if(maze[z][x]===1&&((maze[z][x-1]===0&&maze[z][x+1]===0)||(maze[z-1][x]===0&&maze[z+1][x]===0)))maze[z][x]=0;
+ }
+ const wallMat=mat(0x282932),floorMat=mat(0x17181e);
+ for(let z=0;z<size;z++)for(let x=0;x<size;x++){
+  const p=pos(x,z);
+  if(maze[z][x]){const w=box(scene,p.x,1.7,p.z,cell,3.4,cell,wallMat);walls.push({x:p.x,z:p.z,hx:cell/2,hz:cell/2})}
+  else box(scene,p.x,-.045,p.z,cell-.06,.08,cell-.06,floorMat);
+ }
+ const start=pos(1,1),end=pos(size-2,size-2);
+ player.position.set(start.x,1.65,start.z);yaw=0;pitch=0;
+ exitDoor=new THREE.Group();exitDoor.position.set(end.x,0,end.z);scene.add(exitDoor);
+ box(exitDoor,0,1.4,0,2.1,2.8,.25,mat(0x751b28,{metalness:.2}));
+ box(exitDoor,0,1.5,-.16,2.4,3,.12,mat(0x8d2936,{metalness:.3}));
+ const el=new THREE.PointLight(0xd62942,2,9);el.position.set(end.x,2,end.z);scene.add(el);
+ let spots=[];
+ for(let z=1;z<size-1;z++)for(let x=1;x<size-1;x++)
+  if(!maze[z][x]&&Math.abs(x-1)+Math.abs(z-1)>4&&Math.abs(x-(size-2))+Math.abs(z-(size-2))>2)spots.push([x,z]);
+ const kp=pos(...(spots[Math.floor(rng()*spots.length)]||[size-2,1]));
+ key=new THREE.Group();key.position.set(kp.x,.8,kp.z);scene.add(key);
+ const gold=mat(0xffd15d,{emissive:0xb97819,emissiveIntensity:1.4,metalness:.5});
+ const ring=box(key,0,0,0,.42,.12,.12,gold);ring.rotation.z=.5;
+ box(key,0,-.22,0,.08,.4,.08,gold);
+ const kl=new THREE.PointLight(0xffc35b,1.5,5);key.add(kl);
+ // The monster starts far from the player.
+ let monsterspots=[];
+ for(let z=1;z<size-1;z++)for(let x=1;x<size-1;x++)
+  if(!maze[z][x]&&Math.abs(x-1)+Math.abs(z-1)>7)monsterspots.push([x,z]);
+ const mp=pos(...(monsterspots[Math.floor(rng()*monsterspots.length)]||[size-2,1]));
+ monster=new THREE.Group();monster.position.set(mp.x,0,mp.z);scene.add(monster);
+ const dark=mat(0x08090d),eyes=new THREE.MeshBasicMaterial({color:0xf02038});
+ box(monster,0,1.3,0,.7,1.5,.48,dark);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.38,12,10),dark);head.position.y=2.25;monster.add(head);
+ for(const x of [-.15,.15]){
+  const e=new THREE.Mesh(new THREE.SphereGeometry(.065,8,8),eyes);e.position.set(x,2.27,-.34);monster.add(e);
+ }
+ for(const x of [-.5,.5]){const a=box(monster,x,.9,0,.18,.9,.18,dark);a.rotation.z=x*.4}
+ monster.userData.target=null;monsterAlert=0;
+ scene.fog.density=.025+level*.0004;
+ $('stage').textContent='مرحله '+level;
+ $('keyText').textContent='کلید: پیدا نشده';
+ $('hardText').textContent='سختی: '+names[diff];
+ $('objective').textContent='هدف: کلید طلایی را پیدا کن.';
+}
+function collides(x,z,r=.38){
+ return walls.some(w=>Math.abs(x-w.x)<w.hx+r&&Math.abs(z-w.z)<w.hz+r);
+}
+function message(t){
+ $('msg').textContent=t;$('msg').style.display='block';lastMsg=performance.now()+2100;
+}
+function interact(){
+ if(!running)return;
+ if(key&&Math.hypot(player.position.x-key.position.x,player.position.z-key.position.z)<2.6){
+  hasKey=true;scene.remove(key);key=null;
+  $('keyText').textContent='کلید: پیدا شد ✓';
+  $('objective').textContent='هدف: در خروجی قرمز را پیدا کن.';
+  message('کلید را پیدا کردی! به در قرمز برو.');
+  return;
+ }
+ if(exitDoor&&Math.hypot(player.position.x-exitDoor.position.x,player.position.z-exitDoor.position.z)<2.8){
+  if(hasKey){finish(true);return}
+  message('در قفل است. اول کلید را پیدا کن.');return;
+ }
+ message('چیزی برای تعامل در نزدیکی تو نیست.');
+}
+function finish(win){
+ running=false;dead=!win;
+ $('hud').style.display='none';$('mobile').style.display='none';$('end').style.display='flex';
+ $('endTitle').textContent=win?'مرحله '+level+' را رد کردی':'هیولا تو را پیدا کرد';
+ $('endText').textContent=win?'در این مرحله فرار کردی؛ اما هزارتو هنوز تمام نشده است.':'دوباره تلاش کن. با دقت حرکت کن و از هیولا فاصله بگیر.';
+ $('next').textContent=win?'مرحلهٔ بعد':'تلاش دوباره';
+}
+function start(){
+ if(!renderer)init();
+ $('menu').style.display='none';$('end').style.display='none';
+ $('hud').style.display='block';$('mobile').style.display=innerWidth<=800?'block':'none';
+ running=true;clock.getDelta();
+ if(innerWidth>800)canvas.requestPointerLock?.();
+}
+function pause(){
+ if(!running)return;running=false;
+ $('msg').style.display='block';message('بازی متوقف شد. برای ادامه روی صفحه کلیک کن.');
+}
+function animate(){
+ requestAnimationFrame(animate);
+ if(!renderer)return;
+ const dt=Math.min(clock.getDelta(),.05);
+ if(running){
+  let f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-my;
+  let s=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+mx;
+  const sprint=keys.ShiftLeft||keys.ShiftRight||window.runTouch;
+  const speed=(sprint?5:3.1)*(diff===2?.92:1),len=Math.hypot(f,s)||1;
+  f=f/len*speed*dt;s=s/len*speed*dt;
+  const dx=-Math.sin(yaw)*f+Math.cos(yaw)*s,dz=-Math.cos(yaw)*f-Math.sin(yaw)*s;
+  if(Math.abs(f)+Math.abs(s)>.001){
+   const nx=player.position.x+dx,nz=player.position.z+dz;
+   if(!collides(nx,player.position.z))player.position.x=nx;
+   if(!collides(player.position.x,nz))player.position.z=nz;
+   if(sprint)monsterAlert=Math.max(monsterAlert,.6);
+  }
+  camera.rotation.set(pitch,yaw,0,'YXZ');
+  if(key){key.rotation.y+=dt;key.position.y=.8+Math.sin(performance.now()*.002)*.09}
+  if(monster){
+   const dxm=player.position.x-monster.position.x,dzm=player.position.z-monster.position.z,d=Math.hypot(dxm,dzm)||1;
+   const detect=d<(sprint?14:8)*(1+diff*.3)||monsterAlert>0;
+   if(monsterAlert>0)monsterAlert-=dt;
+   let tx,tz;
+   if(detect){tx=player.position.x;tz=player.position.z}
+   else{
+    if(!monster.userData.target||Math.hypot(monster.userData.target.x-monster.position.x,monster.userData.target.z-monster.position.z)<.8){
+     const opts=[];for(let z=1;z<size-1;z++)for(let x=1;x<size-1;x++)if(!maze[z][x])opts.push(pos(x,z));
+     monster.userData.target=opts[Math.floor(Math.random()*opts.length)];
+    }
+    tx=monster.userData.target.x;tz=monster.userData.target.z;
+   }
+   const vx=tx-monster.position.x,vz=tz-monster.position.z,l=Math.hypot(vx,vz)||1;
+   const sp=(detect?1.45:0.65)*(1+Math.min(level*.035,.65))*(1+diff*.35);
+   const nx=monster.position.x+vx/l*sp*dt,nz=monster.position.z+vz/l*sp*dt;
+   if(!collides(nx,monster.position.z,.35))monster.position.x=nx;
+   if(!collides(monster.position.x,nz,.35))monster.position.z=nz;
+   monster.lookAt(player.position.x,0,player.position.z);
+   if(d<1.1){finish(false)}
+  }
+  if($('msg').style.display!=='none'&&performance.now()>lastMsg)$('msg').style.display='none';
+ }
+ renderer.render(scene,camera);
+}
+$('start').onclick=()=>{if(!renderer)init();makeLevel();start()};
+$('help').onclick=()=>message('رایانه: WASD حرکت، ماوس نگاه، Shift دویدن، E تعامل، F چراغ‌قوه. موبایل: جوی‌استیک حرکت و کشیدن سمت راست برای نگاه.');
+document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{
+ diff=+b.dataset.d;document.querySelectorAll('[data-d]').forEach(x=>x.classList.toggle('active',x===b));
+});
+$('use').onclick=interact;
+$('flash').onclick=()=>{flashOn=!flashOn;flashlight.visible=flashOn;message(flashOn?'چراغ‌قوه روشن شد':'چراغ‌قوه خاموش شد')};
+$('next').onclick=()=>{if(!dead)level++;if(!renderer)init();makeLevel();start()};
+$('back').onclick=()=>{$('end').style.display='none';$('menu').style.display='flex';$('hud').style.display='none';$('mobile').style.display='none';running=false};
+document.addEventListener('keydown',e=>{
+ keys[e.code]=true;
+ if(e.code==='KeyE')interact();
+ if(e.code==='KeyF'){$('flash').click()}
+ if(e.code==='Escape'&&running){running=false;message('بازی متوقف شد؛ برای ادامه روی صفحه کلیک کن.')}
+});
+document.addEventListener('keyup',e=>keys[e.code]=false);
+canvas.addEventListener('click',()=>{
+ if(!running){if($('menu').style.display==='none'&&$('end').style.display==='none')running=true}
+ else if(innerWidth>800&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.();
+});
+document.addEventListener('mousemove',e=>{
+ if(document.pointerLockElement===canvas&&running){yaw-=e.movementX*.0022;pitch=Math.max(-1.2,Math.min(1.2,pitch-e.movementY*.002))}
+});
+$('run').addEventListener('pointerdown',e=>{e.preventDefault();window.runTouch=true});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>$('run').addEventListener(ev,()=>window.runTouch=false));
+const joy=$('joy'),knob=$('knob');
+joy.addEventListener('pointerdown',e=>{joyId=e.pointerId;joy.setPointerCapture(e.pointerId);joyMove(e)});
+joy.addEventListener('pointermove',e=>{if(joyId===e.pointerId)joyMove(e)});
+function joyMove(e){
+ const r=joy.getBoundingClientRect();let dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),l=Math.hypot(dx,dy),max=38;
+ if(l>max){dx=dx/l*max;dy=dy/l*max}
+ knob.style.transform=`translate(${dx}px,${dy}px)`;mx=dx/max;my=dy/max;
+}
+function joyEnd(e){if(joyId===e.pointerId){joyId=null;mx=0;my=0;knob.style.transform='translate(0,0)'}}
+joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
+canvas.addEventListener('pointerdown',e=>{
+ if(innerWidth<=800&&running&&e.clientX>innerWidth*.38){touchLook={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId)}
+});
+canvas.addEventListener('pointermove',e=>{
+ if(touchLook&&touchLook.id===e.pointerId){
+  yaw-=(e.clientX-touchLook.x)*.006;pitch=Math.max(-1.2,Math.min(1.2,pitch-(e.clientY-touchLook.y)*.005));
+  touchLook.x=e.clientX;touchLook.y=e.clientY;
+ }
+});
+canvas.addEventListener('pointerup',()=>touchLook=null);
+canvas.addEventListener('pointercancel',()=>touchLook=null);
+window.addEventListener('resize',()=>{
+ if(renderer){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}
+ if(running)$('mobile').style.display=innerWidth<=800?'block':'none';
+});
+})();
+</script>
+</body>
+</html>
